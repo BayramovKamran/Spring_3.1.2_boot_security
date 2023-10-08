@@ -16,11 +16,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +35,6 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "password")
     private String password;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
@@ -115,6 +116,30 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password, roles);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }
 
